@@ -17,6 +17,7 @@ Sub DQAnalysis()
     Cells(3, 1).Value = "Year"
     Cells(3, 2).Value = "Total Daily Volume"
     Cells(3, 3).Value = "Return"
+    Worksheets("2018").Activate
     
 rowStart = 2
 rowEnd = 3013
@@ -26,7 +27,8 @@ totalVolume = 0
 
 For i = rowStart To rowEnd
     'increase totalVolume if ticker is "DQ"
-    If Cells(i, 1).Value = "DQ" Then
+    If Cells(i, 1).Value = "DQ" And Cells(i - 1, 1).Value <> "DQ" Then
+    'set string price
         totalVolume = totalVolume + Cells(i, 8).Value
     
     End If
@@ -38,5 +40,143 @@ Next i
     Worksheets("DQ Analysis").Activate
     Cells(4, 1).Value = 2018
     Cells(4, 2).Value = totalVolume
+
+End Sub
+
+
+...............................................................................
+
+Sub DQAnalysis()
+    Worksheets("DQ Analysis").Activate
+
+    Range("A1").Value = "DAQO (Ticker: DQ)"
+
+    'Create a header row
+    Cells(3, 1).Value = "Year"
+    Cells(3, 2).Value = "Total Daily Volume"
+    Cells(3, 3).Value = "Return"
+    Worksheets("2018").Activate
+
+    'set initial volume to zero
+    totalVolume = 0
+
+    Dim startingPrice As Double
+    Dim endingPrice As Double
+
+    'find the number of rows to loop over
+    RowCount = Cells(Rows.Count, "A").End(xlUp).Row
+
+    'loop over all the rows
+    For i = 2 To RowCount
+
+        If Cells(i, 1).Value = "DQ" Then
+
+            'increase totalVolume by the value in the current row
+            totalVolume = totalVolume + Cells(i, 8).Value
+
+        End If
+
+        If Cells(i - 1, 1).Value <> "DQ" And Cells(i, 1).Value = "DQ" Then
+
+            startingPrice = Cells(i, 6).Value
+
+        End If
+
+        If Cells(i + 1, 1).Value <> "DQ" And Cells(i, 1).Value = "DQ" Then
+
+            endingPrice = Cells(i, 6).Value
+
+        End If
+
+    Next i
+
+    Worksheets("DQ Analysis").Activate
+    Cells(4, 1).Value = 2018
+    Cells(4, 2).Value = totalVolume
+    Cells(4, 3).Value = (endingPrice / startingPrice) - 1
+
+
+End Sub
+
+.....................................................................................................................
+
+Sub AllStocksAnalysis()
+
+    Worksheets("All Stocks Analysis").Activate
+
+    Range("A1").Value = "All stocks (2018)"
+
+    'Create a header row
+    Cells(3, 1).Value = "Ticker"
+    Cells(3, 2).Value = "Total Daily Volume"
+    Cells(3, 3).Value = "Return"
+End Sub
+
+....................
+
+
+Sub AllStocksAnalysis()
+
+    Worksheets("All Stocks Analysis").Activate
+
+    Range("A1").Value = "All stocks (2018)"
+
+    'Create a header row
+    Cells(3, 1).Value = "Ticker"
+    Cells(3, 2).Value = "Total Daily Volume"
+    Cells(3, 3).Value = "Return"
+    Worksheets("2018").Activate
+    
+    'set initial volume to zero
+    totalVolume = 0
+
+    Dim startingPrice As Double
+    Dim endingPrice As Double
+    
+    'find the number of rows to loop over
+    RowCount = Cells(Rows.Count, "A").End(xlUp).Row
+
+    'loop over all the rows
+    
+    For i = 2 To 11
+
+        If Cells(i, 1).Value = "DQ" Then
+
+            'increase totalVolume by the value in the current row
+            totalVolume = totalVolume + Cells(i, 8).Value
+
+        End If
+
+        If Cells(i - 1, 1).Value <> "DQ" And Cells(i, 1).Value = "DQ" Then
+
+            startingPrice = Cells(i, 6).Value
+
+        End If
+
+        If Cells(i + 1, 1).Value <> "DQ" And Cells(i, 1).Value = "DQ" Then
+
+            endingPrice = Cells(i, 6).Value
+
+        End If
+        
+        
+        ' Set values in column 1 to "AY"
+        Cells(i, 1).Value = "AY"
+
+        ' Set values in column 2 to "Total daily Volumes"
+        Cells(i, 2).Value = "totalVolume"
+
+        ' Set values in column 3 to "Return"
+        Cells(i, 3).Value = "(endingPrice / startingPrice) - 1"
+
+    ' Call the next iteration
+    
+    Next i
+    
+    Worksheets("All Stocks Analysis").Activate
+    For i = 4 To 13
+    Cells(i, 1).Value = AY
+    Cells(i, 2).Value = totalVolume
+    Cells(i, 3).Value = (endingPrice / startingPrice) - 1
 
 End Sub
